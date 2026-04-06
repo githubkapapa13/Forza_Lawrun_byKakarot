@@ -1,5 +1,5 @@
 all: build
 
 build:
-    @echo "Building project..."
-    gcc -o myprogram myprogram.c  # Example build command
+	@echo "Building project..."
+	gcc -o myprogram myprogram.c  # Example build command
