@@ -1,53 +1,29 @@
-name: Build Kernel
+name: CI Workflow
 
 on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
-      - name: Set up environment
-        run: |
-          sudo apt update
-          sudo apt install -y gcc-aarch64-linux-gnu make bc git wget curl unzip
+    - name: Set up the environment
+      run: |
+        sudo apt update
+        sudo apt install -y gcc make bc git wget curl unzip
 
-      - name: Set up toolchain for ARM64
-        run: |
-          mkdir -p $HOME/toolchain
-          wget https://github.com/ARM-software/arm-toolchain/releases/download/2020.02/arm-linux-gnueabihf-2020.02-1.tar.xz
-          tar -xvf arm-linux-gnueabihf-2020.02-1.tar.xz -C $HOME/toolchain/
-
-      - name: Set up kernel source
-        run: |
-          git clone --single-branch https://github.com/negrroo/LawRun_xiaomi_sm6250.git lawrun_kernel
-          git clone --single-branch https://github.com/Xiaomi-SD720G-Devices/android_kernel_xiaomi_sm6250.git forza_kernel
-          cd lawrun_kernel
-          git remote add forza https://github.com/Xiaomi-SD720G-Devices/android_kernel_xiaomi_sm6250.git
-          git fetch forza
-
-      - name: Merge Lawrun and Forza kernel
-        run: |
-          cd lawrun_kernel
-          git checkout master
-          git merge forza/master --allow-unrelated-histories
-
-      - name: Build the Kernel
-        run: |
-          cd lawrun_kernel
-          make ARCH=arm64 CROSS_COMPILE=$HOME/toolchain/bin/aarch64-linux-gnu- defconfig
-          make -j$(nproc) ARCH=arm64 CROSS_COMPILE=$HOME/toolchain/bin/aarch64-linux-gnu-
-
-      - name: Upload Kernel Image
-        uses: actions/upload-artifact@v4
-        with:
-          name: kernel_image
-          path: lawrun_kernel/arch/arm64/boot/Image.gz-dtb
+    - name: Build the project
+      run: |
+        make all
+    
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-artifact
+        path: ./path-to-your-artifact
