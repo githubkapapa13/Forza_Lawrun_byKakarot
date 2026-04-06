@@ -20,8 +20,8 @@ jobs:
 
     - name: Build the project
       run: |
-        make all
-    
+        make build  # Replace with your actual target if it's not 'all'
+
     - name: Upload build artifact
       uses: actions/upload-artifact@v4
       with:
