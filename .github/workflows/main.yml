@@ -25,7 +25,7 @@ jobs:
           mkdir -p $HOME/toolchain
           wget https://github.com/ARM-software/arm-toolchain/releases/download/2020.02/arm-linux-gnueabihf-2020.02-1.tar.xz
           tar -xvf arm-linux-gnueabihf-2020.02-1.tar.xz -C $HOME/toolchain/
-        
+
       - name: Set up kernel source
         run: |
           git clone --single-branch https://github.com/negrroo/LawRun_xiaomi_sm6250.git lawrun_kernel
@@ -47,7 +47,7 @@ jobs:
           make -j$(nproc) ARCH=arm64 CROSS_COMPILE=$HOME/toolchain/bin/aarch64-linux-gnu-
 
       - name: Upload Kernel Image
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: kernel_image
           path: lawrun_kernel/arch/arm64/boot/Image.gz-dtb
