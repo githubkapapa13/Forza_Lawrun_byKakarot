@@ -1,7 +1,10 @@
-name: CI Workflow
+name: Build Project
 
 on:
   push:
+    branches:
+      - main
+  pull_request:
     branches:
       - main
 
@@ -10,20 +13,25 @@ jobs:
     runs-on: ubuntu-24.04
 
     steps:
+    # Step 1: Checkout the repository
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Set up the environment
+    # Step 2: List the contents of the repository to debug if Makefile exists
+    - name: List repository contents
+      run: ls -la
+
+    # Step 3: Set up the necessary build tools (gcc, make, etc.)
+    - name: Install build tools
       run: |
         sudo apt update
         sudo apt install -y gcc make bc git wget curl unzip
 
+    # Step 4: Fetch and check the repository state
+    - name: Run git version
+      run: git --version
+
+    # Step 5: Run the build process (ensure the Makefile has a 'build' or 'all' target)
     - name: Build the project
       run: |
-        make build  # Replace with your actual target if it's not 'all'
-
-    - name: Upload build artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: build-artifact
-        path: ./path-to-your-artifact
+        make all  # Change 'all' to the appropriate target in your Makefile
